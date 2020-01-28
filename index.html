@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>SHi !</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <style>
+        #zone_chat strong {
+            color: white;
+            background-color: black;
+            padding: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Mini jeu !</h1>
+
+    <p id="game"></p>
+    <div id="messageList">
+
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:8080');
+
+        var pseudo = prompt('Quel est votre pseudo ?');
+        socket.emit('petit_nouveau', pseudo);
+
+        this.socket.on('currentPlayers', function (players) {
+            Object.keys(players).forEach(function (id) {
+                socket.emit("pseudo", players[id])
+            });
+        });
+
+        socket.on('msg', function (message) {
+            document.getElementById("messageList").innerHTML += "<p>" + message + "</p>"
+        })
+        socket.on('pseudo', function (pseudo) {
+            document.getElementById("game").innerHTML += "<p class='" + pseudo + "'>" + pseudo + " 0</p>"
+        })
+
+        socket.on('plusUn', function (pseudo) {
+            if (document.getElementsByClassName(pseudo)[0]) {
+                document.getElementsByClassName(pseudo)[0].innerHTML = pseudo + " " + (parseInt(document
+                    .getElementsByClassName(pseudo)[0].innerHTML.split(" ")[1]) + 1)
+            }
+        })
+        socket.on('pseudoDelete', function (pseudo) {
+            if (document.getElementsByClassName(pseudo)[0]) {
+                document.getElementById("game").removeChild(document.getElementsByClassName(pseudo)[0])
+            }
+        })
+    </script>
+</body>
+
+</html>
